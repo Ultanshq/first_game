@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocean Whacker | Initiating System...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --accent: #00ffcc;
+            --dark: #050505;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--dark);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Background Particle Canvas */
+        #particleCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* Container Utama */
+        .loader-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            padding: 50px 80px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Animasi Logo Lingkaran */
+        .logo-box {
+            position: relative;
+            width: 150px; height: 150px;
+            margin: 0 auto 30px;
+        }
+
+        .outer-ring {
+            position: absolute;
+            width: 100%; height: 100%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            border-bottom-color: var(--accent);
+            border-radius: 50%;
+            animation: rotate 2s linear infinite;
+        }
+
+        .inner-wave {
+            position: absolute;
+            top: 15px; left: 15px;
+            width: 120px; height: 120px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 3s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Teks & Progress */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+
+        .progress-container {
+            width: 250px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        #progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            box-shadow: 0 0 15px var(--primary);
+            transition: width 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+        }
+
+        .percentage {
+            margin-top: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        /* Keyframes */
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+            50% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 500px) {
+            .loader-content { padding: 40px 30px; width: 85%; }
+            h1 { font-size: 1.2rem; letter-spacing: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="loader-content">
+        <div class="logo-box">
+            <div class="outer-ring"></div>
+            <div class="inner-wave">W</div>
+        </div>
+        <h1>WIBU GAMES</h1>
+        <p class="status-text" id="status">Booting Ocean Engine...</p>
+        
+        <div class="progress-container">
+            <div id="progress-fill"></div>
+        </div>
+        <div class="percentage" id="percent">0%</div>
+    </div>
+
+    <script>
+        // 1. Particle System (Energi Laut)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = `rgba(0, 210, 255, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 2. Loading Logic
+        const progressFill = document.getElementById('progress-fill');
+        const percentText = document.getElementById('percent');
+        const statusText = document.getElementById('status');
+        
+        const messages = [
+            "Initializing Port...",
+            "Loading Ocean Assets...",
+            "Synchronizing Grid 3x3...",
+            "Deploying Wibu Power...",
+            "Ready to Whack!"
+        ];
+
+        let width = 0;
+        const loading = setInterval(() => {
+            width += Math.random() * 12;
+            if (width > 100) width = 100;
+
+            progressFill.style.width = width + "%";
+            percentText.innerText = Math.floor(width) + "%";
+
+            // Ganti pesan status berdasarkan progress
+            if (width < 30) statusText.innerText = messages[0];
+            else if (width < 50) statusText.innerText = messages[1];
+            else if (width < 70) statusText.innerText = messages[2];
+            else if (width < 90) statusText.innerText = messages[3];
+            else statusText.innerText = messages[4];
+
+            if (width >= 100) {
+                clearInterval(loading);
+                setTimeout(() => {
+                    // Transisi ke halaman berikutnya
+                    document.body.style.transition = "1s";
+                    document.body.style.opacity = "0";
+                    setTimeout(() => {
+                        window.location.href = 'lanjut.html';
+                    }, 1000);
+                }, 800);
+            }
+        }, 200);
+    </script>
+</body>
+</html>

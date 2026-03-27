@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ocean Whacker | Briefing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --accent: #ffcc00;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(-45deg, #00d2ff, #3a7bd5, #0062ff, #00c6ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh; /* Gunakan min-height agar bisa scroll */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px; /* Jaga jarak dari tepi layar HP */
+            overflow-y: auto; /* Aktifkan scroll vertikal jika konten penuh */
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); /* Support Safari iOS */
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: var(--white);
+            margin: auto; /* Menjaga posisi di tengah saat scroll */
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 8vw, 2rem); /* Font adaptif */
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .high-score-box {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .hs-label { font-size: 0.6rem; letter-spacing: 2px; opacity: 0.8; }
+        .hs-value { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(2rem, 10vw, 2.5rem); 
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .icon {
+            min-width: 30px;
+            height: 30px;
+            background: var(--white);
+            color: var(--secondary);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .btn-start {
+            background: var(--white);
+            color: var(--secondary);
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            -webkit-tap-highlight-color: transparent; /* Hilangkan kotak biru saat klik di HP */
+        }
+
+        .btn-start:active { transform: scale(0.95); }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 0.65rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive Mobile Kecil */
+        @media (max-height: 600px) {
+            .container { padding: 20px 15px; }
+            h1 { font-size: 1.4rem; }
+            .info-item { margin-bottom: 8px; font-size: 0.75rem; }
+            .high-score-box { margin-bottom: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>OCEAN MISSION</h1>
+        <p class="subtitle">Sultan Iskhaq • Security Protocol</p>
+
+        <div class="high-score-box">
+            <p class="hs-label">REKOR TERTINGGI</p>
+            <p class="hs-value" id="hs-display">0</p>
+        </div>
+
+        <div class="info-card">
+            <div class="info-item">
+                <div class="icon">❤️</div>
+                <p>Kamu punya <b>5 Nyawa</b>. Jangan biarkan target kabur!</p>
+            </div>
+            <div class="info-item">
+                <div class="icon">🎨</div>
+                <p>Warna berubah setiap <b>5 Poin</b>. Level up!</p>
+            </div>
+            <div class="info-item">
+                <div class="icon">⚡</div>
+                <p>Kecepatan meningkat seiring naiknya skor.</p>
+            </div>
+        </div>
+
+        <button class="btn-start" onclick="goToGame()">MULAI OPERASI</button>
+        
+        <p class="footer-text">SMK IBG BOGOR - TKJ DIVISION</p>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const savedScore = localStorage.getItem('sultan_score_master') || 0;
+            document.getElementById('hs-display').innerText = savedScore;
+        };
+
+        function goToGame() {
+            document.querySelector('.container').style.transition = "0.4s";
+            document.querySelector('.container').style.opacity = "0";
+            document.querySelector('.container').style.transform = "scale(0.9)";
+            setTimeout(() => { window.location.href = 'game.html'; }, 400);
+        }
+    </script>
+</body>
+</html>

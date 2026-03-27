@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ocean Whacker | Mobile Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-top: #00d2ff; --bg-bottom: #3a7bd5;
+            --mole-main: #81ecec; --mole-border: #00cec9;
+        }
+
+        /* TEMA */
+        body.theme-5 { --bg-top: #fd79a8; --bg-bottom: #e84393; --mole-main: #fab1a0; --mole-border: #ff7675; }
+        body.theme-10 { --bg-top: #fbc531; --bg-bottom: #e1b12c; --mole-main: #ffeaa7; --mole-border: #fdcb6e; }
+        body.theme-15 { --bg-top: #95afc0; --bg-bottom: #535c68; --mole-main: #dff9fb; --mole-border: #c7ecee; }
+        body.theme-20 { --bg-top: #eb4d4b; --bg-bottom: #0a0a0a; --mole-main: #ff9f43; --mole-border: #ee5253; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column; align-items: center;
+            font-family: 'Poppins', sans-serif; color: white;
+            transition: all 0.8s ease; overflow: hidden; position: relative;
+        }
+
+        /* TOMBOL MENU */
+        .btn-home-corner {
+            position: fixed; top: 15px; left: 15px;
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 200; backdrop-filter: blur(5px);
+        }
+
+        /* GAME HEADER */
+        .game-header {
+            width: 100%; max-width: 500px; padding: 70px 20px 10px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 10;
+        }
+        .heart-container { font-size: 1.2rem; }
+        .score-display {
+            text-align: right; background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .score-display span { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; display: block; }
+        .score-label { font-size: 0.5rem; font-weight: bold; }
+
+        /* GRID 9 KOTAK */
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            width: 95%; max-width: 400px; z-index: 5; margin-top: 10px;
+        }
+        .hole { aspect-ratio: 1/1; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; overflow: hidden; }
+        .mole {
+            width: 70%; height: 70%; background: var(--mole-main);
+            border: 3px solid var(--mole-border); border-radius: 50%;
+            position: absolute; left: 15%; top: 110%; transition: top 0.1s ease;
+        }
+        .mole.up { top: 15%; }
+
+        /* API CSS */
+        #fire-container {
+            position: fixed; bottom: -40px; left: 0; width: 100%; height: 200px;
+            display: flex; justify-content: center; align-items: flex-end;
+            opacity: 0; transition: 1s; z-index: 1; pointer-events: none;
+        }
+        body.theme-20 #fire-container { opacity: 0.6; }
+        .flame {
+            width: 30px; height: 30px; background: #ff9f43; border-radius: 50% 50% 20% 20%;
+            filter: blur(4px); animation: moveFlames 1s infinite alternate; margin: 0 -5px;
+        }
+        @keyframes moveFlames { 100% { transform: translate(5px, -15px) scale(1.1); opacity: 0.7; } }
+
+        /* --- FIX SCORE TERPOTONG DI GAME OVER --- */
+        #game-over {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 300; padding: 20px;
+        }
+
+        .go-title { letter-spacing: 5px; opacity: 0.6; font-size: 0.8rem; margin-bottom: 5px; }
+        
+        /* Menggunakan viewport units (vw) agar font menyesuaikan lebar layar */
+        .final-score { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 18vw; /* Skala otomatis berdasarkan lebar layar HP */
+            max-font-size: 120px; /* Batas maksimal di PC */
+            color: #ee5253; 
+            margin: 0; 
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(238, 82, 83, 0.5);
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 250px; margin-top: 30px; }
+        .action-btn { padding: 16px; border: none; border-radius: 50px; font-family: 'Orbitron', sans-serif; cursor: pointer; }
+        .retry-btn { background: white; color: #333; }
+        .menu-btn { background: transparent; color: white; border: 2px solid white; }
+
+        .shake { animation: shake 0.3s; }
+        @keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    </style>
+</head>
+<body id="main-body">
+
+    <div class="btn-home-corner" onclick="goBackMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    </div>
+
+    <div id="fire-container">
+        <div class="flame"></div><div class="flame"></div><div class="flame"></div><div class="flame"></div><div class="flame"></div><div class="flame"></div><div class="flame"></div><div class="flame"></div>
+    </div>
+
+    <div class="game-header">
+        <div id="lives-display">❤️❤️❤️❤️❤️</div>
+        <div class="score-display">
+            <span id="score-val">0</span>
+            <div class="score-label">POINTS</div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+        <div class="hole"><div class="mole" onclick="bonk(this)"></div></div>
+    </div>
+
+    <div id="game-over">
+        <p class="go-title">MISSION FAILED</p>
+        <div class="final-score" id="final-score">0</div>
+        <div class="btn-group">
+            <button class="action-btn retry-btn" onclick="location.reload()">TRY AGAIN</button>
+            <button class="action-btn menu-btn" onclick="goBackMenu()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0; let lives = 5; let gameActive = true; let lastHole;
+        const body = document.getElementById('main-body');
+
+        function updateTheme() {
+            body.classList.remove('theme-5', 'theme-10', 'theme-15', 'theme-20');
+            if (score >= 20) body.classList.add('theme-20');
+            else if (score >= 15) body.classList.add('theme-15');
+            else if (score >= 10) body.classList.add('theme-10');
+            else if (score >= 5) body.classList.add('theme-5');
+        }
+
+        function peep() {
+            if (!gameActive) return;
+            const holes = document.querySelectorAll('.hole');
+            const hole = holes[Math.floor(Math.random() * holes.length)];
+            if (hole === lastHole) return peep();
+            lastHole = hole;
+            const mole = hole.querySelector('.mole');
+            mole.classList.add('up');
+            const time = Math.max(400, 1100 - (score * 30));
+            setTimeout(() => {
+                if (mole.classList.contains('up')) {
+                    mole.classList.remove('up');
+                    loseLife();
+                }
+                if (gameActive) peep();
+            }, time);
+        }
+
+        function bonk(m) {
+            if (!m.classList.contains('up') || !gameActive) return;
+            score++;
+            m.classList.remove('up');
+            document.getElementById('score-val').innerText = score;
+            updateTheme();
+            if (navigator.vibrate) navigator.vibrate(40);
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('lives-display').innerText = '❤️'.repeat(lives);
+            body.classList.add('shake');
+            setTimeout(() => body.classList.remove('shake'), 300);
+            if (lives <= 0) endGame();
+        }
+
+        function goBackMenu() { window.location.href = 'lanjut.html'; }
+
+        function endGame() {
+            gameActive = false;
+            const hs = localStorage.getItem('sultan_score_master') || 0;
+            if (score > hs) localStorage.setItem('sultan_score_master', score);
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-over').style.display = 'flex';
+        }
+        window.onload = () => { setTimeout(peep, 1000); };
+    </script>
+</body>
+</html>
