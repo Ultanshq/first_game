@@ -9,102 +9,125 @@
         :root {
             --primary: #00d2ff;
             --secondary: #3a7bd5;
-            --accent: #ffcc00;
+            --accent: #fbc531;
             --white: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: linear-gradient(-45deg, #00d2ff, #3a7bd5, #0062ff, #00c6ff);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh; /* Gunakan min-height agar bisa scroll */
+            background: linear-gradient(180deg, #74b9ff 0%, #3a7bd5 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Poppins', sans-serif;
-            padding: 20px; /* Jaga jarak dari tepi layar HP */
-            overflow-y: auto; /* Aktifkan scroll vertikal jika konten penuh */
+            padding: 20px;
+            overflow: hidden; /* Mencegah scroll karena ada ombak */
+            position: relative;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* ANIMASI OMBAK */
+        .waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 15vh;
+            min-height: 100px;
+            max-height: 150px;
+            z-index: 1;
+        }
+
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+        @keyframes move-forever {
+            0% { transform: translate3d(-90px,0,0); }
+            100% { transform: translate3d(85px,0,0); }
         }
 
         .container {
             width: 100%;
-            max-width: 450px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); /* Support Safari iOS */
-            border-radius: 25px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 30px 20px;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 40px 25px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             color: var(--white);
-            margin: auto; /* Menjaga posisi di tengah saat scroll */
+            z-index: 10; /* Di atas ombak */
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.5rem, 8vw, 2rem); /* Font adaptif */
+            font-size: 1.8rem;
+            letter-spacing: 2px;
             margin-bottom: 5px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .subtitle {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .high-score-box {
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .hs-label { font-size: 0.6rem; letter-spacing: 2px; opacity: 0.8; }
+        .hs-label { font-size: 0.7rem; letter-spacing: 3px; font-weight: 700; margin-bottom: 5px; color: rgba(255,255,255,0.9); }
         .hs-value { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: clamp(2rem, 10vw, 2.5rem); 
+            font-size: 3.5rem; 
             color: var(--accent);
-            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            line-height: 1;
         }
 
         .info-card {
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 15px;
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            padding: 20px;
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .info-item {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-size: 0.85rem;
-            line-height: 1.4;
         }
+        .info-item:last-child { margin-bottom: 0; }
 
         .icon {
-            min-width: 30px;
-            height: 30px;
+            width: 32px; height: 32px;
             background: var(--white);
-            color: var(--secondary);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 12px;
-            font-weight: bold;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            margin-right: 15px; font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .btn-start {
@@ -112,31 +135,20 @@
             color: var(--secondary);
             border: none;
             width: 100%;
-            padding: 15px;
-            border-radius: 50px;
-            font-family: 'Orbitron', sans-serif;
+            padding: 18px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
             font-size: 1.1rem;
             cursor: pointer;
             transition: 0.3s;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            -webkit-tap-highlight-color: transparent; /* Hilangkan kotak biru saat klik di HP */
         }
 
-        .btn-start:active { transform: scale(0.95); }
+        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
+        .btn-start:active { transform: scale(0.98); }
 
-        .footer-text {
-            margin-top: 20px;
-            font-size: 0.65rem;
-            opacity: 0.7;
-        }
-
-        /* Responsive Mobile Kecil */
-        @media (max-height: 600px) {
-            .container { padding: 20px 15px; }
-            h1 { font-size: 1.4rem; }
-            .info-item { margin-bottom: 8px; font-size: 0.75rem; }
-            .high-score-box { margin-bottom: 15px; }
-        }
+        .footer-text { margin-top: 25px; font-size: 0.7rem; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -166,21 +178,35 @@
         </div>
 
         <button class="btn-start" onclick="goToGame()">MULAI OPERASI</button>
-        
         <p class="footer-text">WIBU GAMES - Sultan Iskhaq R</p>
     </div>
 
+    <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+    </svg>
+
     <script>
+        // SINKRONISASI SKOR
         window.onload = () => {
+            // Kita ambil 'sultan_score_master' agar SAMA dengan game.html
             const savedScore = localStorage.getItem('sultan_score_master') || 0;
             document.getElementById('hs-display').innerText = savedScore;
         };
 
         function goToGame() {
-            document.querySelector('.container').style.transition = "0.4s";
+            document.querySelector('.container').style.transition = "0.5s";
             document.querySelector('.container').style.opacity = "0";
-            document.querySelector('.container').style.transform = "scale(0.9)";
-            setTimeout(() => { window.location.href = 'game.html'; }, 400);
+            document.querySelector('.container').style.transform = "translateY(-20px)";
+            setTimeout(() => { window.location.href = 'game.html'; }, 500);
         }
     </script>
 </body>
